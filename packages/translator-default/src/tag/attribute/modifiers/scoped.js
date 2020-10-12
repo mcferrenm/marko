@@ -10,7 +10,7 @@ export default {
       withPreviousLocation(
         t.callExpression(
           t.memberExpression(
-            file._componentDefIdentifier,
+            t.identifier("_component"),
             t.identifier("elId")
           ),
           [value.node]

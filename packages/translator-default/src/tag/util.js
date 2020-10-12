@@ -69,8 +69,8 @@ export function getAttrs(path, noCamel, skipRenderBody) {
       path.insertBefore(body);
     } else {
       if (node.params) {
-        if (!file._hasTagParams && !isIgnoredTagParams(path)) {
-          file._hasTagParams = true;
+        if (!file.metadata.marko.hasTagParams && !isIgnoredTagParams(path)) {
+          file.metadata.marko.hasTagParams = true;
         }
       }
 

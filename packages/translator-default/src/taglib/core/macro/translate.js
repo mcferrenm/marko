@@ -5,17 +5,18 @@ const EMPTY_ARR = [];
 
 export function exit(path) {
   const { node } = path;
-  const {
-    body: { body }
-  } = node;
+  const { body: { body } } = node;
   const params = [t.identifier("out")].concat(node.params || EMPTY_ARR);
   const block = t.blockStatement(body);
+  const name = node.attributes.find(attr => attr.name === "name");
+
+  if (!path.hub.file.metadata.marko.macros[name.value.value]) {
+    debugger;
+  }
   path.replaceWith(
     withPreviousLocation(
-      t.functionDeclaration(node._macroId, params, block),
+      t.functionDeclaration(t.identifier(path.hub.file.metadata.marko.macros[name.value.value]), params, block),
       node
     )
   );
-
-  node._macroId = undefined;
 }

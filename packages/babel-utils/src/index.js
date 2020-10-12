@@ -9,8 +9,7 @@ export {
   getFullyResolvedTagName,
   findParentTag,
   findAttributeTags,
-  getArgOrSequence,
-  ___addMacro
+  getArgOrSequence
 } from "./tags";
 export {
   assertAllowedAttributes,

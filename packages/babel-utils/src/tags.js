@@ -1,7 +1,6 @@
 import { types as t } from "@marko/babel-types";
 import { getTagDefForTagName } from "./taglib";
 const TRANSPARENT_TAGS = new Set(["for", "while", "if", "else", "_no-update"]);
-const MACROS = new WeakMap();
 
 export function isNativeTag(path) {
   if (path.node._isDynamicString) {
@@ -40,29 +39,18 @@ export function isMacroTag(path) {
 }
 
 export function getMacroIdentifier(path) {
-  const macros = MACROS.get(path.hub.file);
+  const macros = path.hub.file.metadata.marko.macros;
 
   if (macros) {
-    const {
-      node: { name }
-    } = path;
-    return t.isStringLiteral(name) && macros.get(name.value);
-  }
-}
+    const { name } = path.node;
+    if (t.isStringLiteral(name)) {
+      const id = macros[name.value];
 
-export function ___addMacro(file, name) {
-  const id = file.scope.generateUidIdentifier(name);
-  let macros = MACROS.get(file);
-  if (macros) {
-    if (macros.get(name)) {
-      return false;
+      if (id) {
+        return t.identifier(id);
+      }
     }
-  } else {
-    MACROS.set(file, (macros = new Map()));
   }
-
-  macros.set(name, id);
-  return id;
 }
 
 export function getTagDef(path) {

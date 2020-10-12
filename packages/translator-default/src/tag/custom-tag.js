@@ -64,7 +64,7 @@ export default function(path, isNullable) {
           // TODO: this could be left as null if we froze input mutations and used a default object in the runtime.
           t.isNullLiteral(foundAttrs) ? t.objectExpression([]) : foundAttrs,
           t.identifier("out"),
-          file._componentDefIdentifier,
+          t.identifier("_component"),
           key,
           ...buildEventHandlerArray(path)
         ]

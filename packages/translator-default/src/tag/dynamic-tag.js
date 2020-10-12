@@ -43,7 +43,7 @@ export default function(path) {
       tagProperties.length
         ? t.objectExpression(tagProperties)
         : t.nullLiteral(),
-      file._componentDefIdentifier,
+      t.identifier("_component"),
       key,
       ...buildEventHandlerArray(path)
     ]

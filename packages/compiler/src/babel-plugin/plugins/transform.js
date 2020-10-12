@@ -7,11 +7,6 @@ import { enter, exit } from "../util/plugin-hooks";
  * Applies custom transformers on tags.
  */
 export const visitor = {
-  Program(path) {
-    path.hub.file._componentDefIdentifier = path.scope.generateUidIdentifier(
-      "component"
-    );
-  },
   MarkoTag: {
     enter(path) {
       const transformers = getTransformersForTag(path);
