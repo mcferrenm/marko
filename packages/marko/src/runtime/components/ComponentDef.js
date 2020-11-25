@@ -88,9 +88,9 @@ ComponentDef.prototype = {
 
 ComponentDef.prototype.nk = ComponentDef.prototype.___nextKey;
 
-ComponentDef.___deserialize = function(o, types, global, registry) {
+ComponentDef.___deserialize = function(o, typeName, global, registry) {
   var id = o[0];
-  var typeName = types[o[1]];
+  // var typeName = types[o[1]];
   var input = o[2] || null;
   var extra = o[3] || EMPTY_OBJECT;
 
