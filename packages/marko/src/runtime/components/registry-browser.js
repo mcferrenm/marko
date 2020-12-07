@@ -1,36 +1,35 @@
 var complain = "MARKO_DEBUG" && require("complain");
 var defineComponent = require("./defineComponent");
 var loader = require("../../loader");
-// TODO: why is destructuring not working here?
-var replaceMe = require("../components/init-components-browser");
+var queueMicrotask = require("../queueMicrotask");
+var { tryHydrateComponent } = require("../components/init-components-browser");
 require(".");
 
 var registered = {};
 var loaded = {};
 var componentTypes = {};
-var pendingDefs = [];
+var pendingDefs = {};
 
-function register(componentId, def) {
-  registered[componentId] = def;
-  delete loaded[componentId];
-  delete componentTypes[componentId];
+function register(type, def) {
+  var pendingForType = pendingDefs[type];
+  registered[type] = def;
+  delete loaded[type];
+  delete componentTypes[type];
 
-  if (pendingDefs.length) {
-    pendingDefs.forEach(([def, type]) => {
-      var mount = replaceMe.___tryHydrateComponent(def, type);
-      mount && mount();
+  if (pendingForType) {
+    delete pendingDefs[type];
+    queueMicrotask(function() {
+      pendingForType.forEach(function(args) {
+        tryHydrateComponent(args[0], type, args[1], args[2])();
+      });
     });
-    pendingDefs.length = 0;
   }
-  return componentId;
+
+  return type;
 }
 
-// function addPendingDef(def, type, meta) {
-//   pendingDefs[def.___type] = pendingDefs[def.___type] || [];
-//   pendingDefs[def.___type].push([def, meta]);
-// }
-function addPendingDef(def, type) {
-  pendingDefs.push([def, type]);
+function addPendingDef(def, type, doc, runtimeId) {
+  (pendingDefs[type] = pendingDefs[type] || []).push([def, doc, runtimeId]);
 }
 
 function hasPendingDef(type) {
@@ -107,8 +106,6 @@ function getComponentClass(typeName, isLegacy) {
           "(id, doc) { OldComponentClass.call(this, id, doc); }"
       );
       ComponentClass.prototype = OldComponentClass.prototype;
-      // TODO: remove this, why are we hitting this path?
-      ComponentClass.prototype.___loadFail = false;
     } catch (e) {
       /** ignore error */
     }

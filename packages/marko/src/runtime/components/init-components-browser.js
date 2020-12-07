@@ -353,13 +353,13 @@ function checkPendingAndTryHydrate(meta, doc, runtimeId, renderedComponents) {
   (renderedComponents.w || [])
     .map(function(componentDef) {
       var id = componentDef[1];
-      var type = renderedComponents.t[id];
+      var typeName = renderedComponents.t[id];
 
-      if (!hasPendingDef(type)) {
-        addPendingDef(componentDef, type);
+      if (!hasPendingDef(typeName)) {
+        addPendingDef(componentDef, typeName, doc, runtimeId);
         return;
       } else {
-        return tryHydrateComponent(componentDef, meta, doc, runtimeId);
+        return tryHydrateComponent(componentDef, typeName, doc, runtimeId);
       }
     })
     .reverse()
@@ -368,10 +368,8 @@ function checkPendingAndTryHydrate(meta, doc, runtimeId, renderedComponents) {
   return this;
 }
 
-function tryHydrateComponent(componentDef, meta, doc, runtimeId) {
-  var typeName = componentDef[1];
+function tryHydrateComponent(componentDef, typeName, doc, runtimeId) {
   componentDef = ComponentDef.___deserialize(componentDef, typeName, registry);
-
   var mount = hydrateComponentAndGetMount(componentDef, doc);
 
   var deferredDefs;
@@ -440,4 +438,4 @@ function tryInvoke(fn) {
 
 exports.___initClientRendered = initClientRendered;
 exports.___initServerRendered = initServerRendered;
-exports.___tryHydrateComponent = tryHydrateComponent;
+exports.tryHydrateComponent = tryHydrateComponent;
